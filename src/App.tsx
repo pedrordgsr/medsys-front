@@ -14,12 +14,22 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <NavigationMenu>
+    <div className='h-screen flex flex-col relative'>
+      <NavigationMenu className='fixed'>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
@@ -29,9 +39,9 @@ function App() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className=' h-200 flex flex-col justify-around m-0 p-0'>
+      <div className=' flex flex-col flex-1 justify-around'>
       <h1 className='text-stone-600 text-2xl'>Bem-Vindo ao MedSys</h1>
-      <div className="card text-red flex gap-5 justify-center">
+      <div className=" text-red flex gap-5 justify-center">
         <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
           Medicamentos
         </div>
@@ -44,13 +54,14 @@ function App() {
         <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
           Vendas
         </div>
+
       </div>
-      <footer className="read-the-docs">
+      <footer className="">
         Desenvolvido por Pedro Rodrigues ltda.
       </footer>
       </div>
       
-    </>
+    </div>
   )
 }
 
