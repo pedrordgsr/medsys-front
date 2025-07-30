@@ -3,31 +3,53 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu"
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuLink>Link</NavigationMenuLink>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+      <div className=' h-200 flex flex-col justify-around m-0 p-0'>
+      <h1 className='text-stone-600 text-2xl'>Bem-Vindo ao MedSys</h1>
+      <div className="card text-red flex gap-5 justify-center">
+        <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
+          Medicamentos
+        </div>
+        <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
+          Clientes
+        </div>
+        <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
+          Filiais
+        </div>
+        <div className='border-2 rounded-md w-32 h-32 itens-center flex flex-col justify-center hover:border-stone-600  transition duration-300 ease-in-out cursor-pointer'>
+          Vendas
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card text-2xl">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <footer className="read-the-docs">
+        Desenvolvido por Pedro Rodrigues ltda.
+      </footer>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      
     </>
   )
 }
