@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils'
 const links = [
   { to: '/', label: 'Início' },
   { to: '/clientes', label: 'Clientes' },
-  { to: '/medicamentos', label: 'Medicamentos', disabled: true },
-  { to: '/filiais', label: 'Filiais', disabled: true },
+  { to: '/medicamentos', label: 'Medicamentos'},
+  { to: '/filiais', label: 'Filiais' },
   { to: '/vendas', label: 'Vendas', disabled: true },
 ]
 

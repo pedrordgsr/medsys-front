@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
-import { listarClientes, criarCliente, atualizarCliente, deletarCliente, type ClienteDTO } from '@/lib/api/cliente'
+import { listarFiliais, criarFilial, atualizarFilial, deletarFilial, type FilialDTO } from '@/lib/api/filial'
 
-type Cliente = ClienteDTO
+type Filial = FilialDTO
 
-interface NovoClienteForm { nome: string; cpf: string }
+interface NovoFilialForm { endereco: string; telefone: string }
 
-export default function Clientes() {
-    const [clientes, setClientes] = useState<Cliente[]>([])
+export default function Filiais() {
+    const [filiais, setFiliais] = useState<Filial[]>([])
     const [loading, setLoading] = useState(false)
     const [erro, setErro] = useState<string | null>(null)
-    const [form, setForm] = useState<NovoClienteForm>({ nome: '', cpf: '' })
+    const [form, setForm] = useState<NovoFilialForm>({ endereco: '', telefone: '' })
     const [salvando, setSalvando] = useState(false)
     const [editandoId, setEditandoId] = useState<number | null>(null)
 
@@ -18,10 +18,10 @@ export default function Clientes() {
         setLoading(true)
         setErro(null)
         try {
-            const data = await listarClientes()
-            setClientes(data)
+            const data = await listarFiliais()
+            setFiliais(data)
         } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : 'Erro ao buscar clientes'
+            const msg = e instanceof Error ? e.message : 'Erro ao buscar filiais'
             setErro(msg)
         } finally {
             setLoading(false)
@@ -37,20 +37,20 @@ export default function Clientes() {
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault()
-        if (!form.nome.trim() || !form.cpf.trim()) {
-            setErro('Preencha nome e CPF')
+        if (!form.endereco.trim() || !form.telefone.trim()) {
+            setErro('Preencha endereço e telefone')
             return
         }
         setErro(null)
         setSalvando(true)
         try {
-            const payload = { nome: form.nome.trim(), cpf: form.cpf.trim() }
+            const payload = { endereco: form.endereco.trim(), telefone: form.telefone.trim() }
             if (editandoId != null) {
-                await atualizarCliente(editandoId, payload)
+                await atualizarFilial(editandoId, payload)
             } else {
-                await criarCliente(payload)
+                await criarFilial(payload)
             }
-            setForm({ nome: '', cpf: '' })
+            setForm({ endereco: '', telefone: '' })
             setEditandoId(null)
             await carregar() // Recarrega lista
             } catch (e: unknown) {
@@ -61,28 +61,28 @@ export default function Clientes() {
         }
     }
 
-    function iniciarEdicao(cliente: Cliente) {
+    function iniciarEdicao(filial: Filial) {
         if (salvando || loading) return
-        setForm({ nome: cliente.nome, cpf: cliente.cpf })
-        setEditandoId(cliente.id)
+        setForm({ endereco: filial.endereco, telefone: filial.telefone })
+        setEditandoId(filial.id)
         setErro(null)
     }
 
     function cancelarEdicao() {
         if (salvando) return
-        setForm({ nome: '', cpf: '' })
+        setForm({ endereco: '', telefone: '' })
         setEditandoId(null)
         setErro(null)
     }
 
     async function deletar(id: number) {
         if (salvando || loading) return
-        const confirmacao = window.confirm('Deseja realmente excluir este cliente?')
+        const confirmacao = window.confirm('Deseja realmente excluir esta filial?')
         if (!confirmacao) return
         setSalvando(true)
         setErro(null)
         try {
-            await deletarCliente(id)
+            await deletarFilial(id)
             // Se estava editando esse mesmo id, cancela edição
             if (editandoId === id) cancelarEdicao()
             await carregar()
@@ -96,37 +96,37 @@ export default function Clientes() {
 
     return (
         <div className="p-6 max-w-5xl mx-auto flex flex-col gap-6">
-            <h1 className="text-2xl font-semibold text-stone-700">Clientes</h1>
+            <h1 className="text-2xl font-semibold text-stone-700">Filiais</h1>
             <div className="grid md:grid-cols-2 gap-6 items-start">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Novo Cliente</CardTitle>
-                        <CardDescription>Cadastrar cliente com Nome e CPF.</CardDescription>
+                        <CardTitle>Nova Filial</CardTitle>
+                        <CardDescription>Cadastrar filial com Endereço e Telefone.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="nome" className="text-sm font-medium">Nome</label>
+                                <label htmlFor="endereco" className="text-sm font-medium">Endereço</label>
                                 <input
-                                    id="nome"
-                                    name="nome"
-                                    value={form.nome}
+                                    id="endereco"
+                                    name="endereco"
+                                    value={form.endereco}
                                     onChange={onChange}
                                     className="border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-stone-400"
-                                    placeholder="Nome completo"
+                                    placeholder="Endereço completo"
                                     disabled={salvando}
                                     required
                                 />
                             </div>
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="cpf" className="text-sm font-medium">CPF</label>
+                                <label htmlFor="telefone" className="text-sm font-medium">Telefone</label>
                                 <input
-                                    id="cpf"
-                                    name="cpf"
-                                    value={form.cpf}
+                                    id="telefone"
+                                    name="telefone"
+                                    value={form.telefone}
                                     onChange={onChange}
                                     className="border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-stone-400"
-                                    placeholder="Somente números"
+                                    placeholder="(xx) xxxxx-xxxx"
                                     disabled={salvando}
                                     required
                                     maxLength={11}
@@ -167,8 +167,8 @@ export default function Clientes() {
 
                 <Card className="min-h-[300px]">
                     <CardHeader>
-                        <CardTitle>Lista de Clientes</CardTitle>
-                        <CardDescription>{loading ? 'Carregando...' : clientes.length ? `${clientes.length} cliente(s)` : 'Nenhum cliente cadastrado'}</CardDescription>
+                        <CardTitle>Lista de Filiais</CardTitle>
+                        <CardDescription>{loading ? 'Carregando...' : filiais.length ? `${filiais.length} filial(is)` : 'Nenhuma filial cadastrada'}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
@@ -176,28 +176,28 @@ export default function Clientes() {
                                 <thead>
                                     <tr className="text-left border-b">
                                         <th className="py-2 pr-4">ID</th>
-                                        <th className="py-2 pr-4">Nome</th>
-                                        <th className="py-2 pr-4">CPF</th>
+                                        <th className="py-2 pr-4">Endereço</th>
+                                        <th className="py-2 pr-4">Telefone</th>
                                         <th className="py-2 pr-2">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {!loading && clientes.map(c => (
-                                        <tr key={c.id} className="border-b last:border-b-0 hover:bg-stone-50">
-                                            <td className="py-2 pr-4 font-mono text-xs">{c.id}</td>
-                                            <td className="py-2 pr-4">{c.nome}</td>
-                                            <td className="py-2 pr-4 font-mono">{c.cpf}</td>
+                                    {!loading && filiais.map(f => (
+                                        <tr key={f.id} className="border-b last:border-b-0 hover:bg-stone-50">
+                                            <td className="py-2 pr-4 font-mono text-xs">{f.id}</td>
+                                            <td className="py-2 pr-4">{f.endereco}</td>
+                                            <td className="py-2 pr-4 font-mono">{f.telefone}</td>
                                             <td className="py-2 pr-2 whitespace-nowrap text-xs">
                                                 <button
                                                     type="button"
-                                                    onClick={() => iniciarEdicao(c)}
+                                                    onClick={() => iniciarEdicao(f)}
                                                     disabled={loading || salvando}
                                                     className="text-blue-600 hover:underline disabled:opacity-50 mr-2">
                                                     Editar
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => deletar(c.id)}
+                                                    onClick={() => deletar(f.id)}
                                                     disabled={loading || salvando}
                                                     className="text-red-600 hover:underline disabled:opacity-50">
                                                     Excluir
