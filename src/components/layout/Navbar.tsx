@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 const links = [
   { to: '/', label: 'Início' },
   { to: '/clientes', label: 'Clientes' },
-  { to: '/medicamentos', label: 'Medicamentos'},
+  { to: '/medicamentos', label: 'Medicamentos' },
   { to: '/filiais', label: 'Filiais' },
-  { to: '/vendas', label: 'Vendas', disabled: true },
+  { to: '/vendas', label: 'Vendas' },
 ]
 
 export function Navbar() {
@@ -21,9 +21,7 @@ export function Navbar() {
               <NavigationMenuItem key={l.to}>
                 <NavLink
                   to={l.to}
-                  data-disabled={l.disabled}
                   className={({ isActive }) => cn(
-                    'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-40',
                     'px-3 py-2 rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-stone-300',
                     'hover:bg-stone-100 data-[active=true]:bg-stone-200/60',
                     isActive && 'data-[active=true]' )}

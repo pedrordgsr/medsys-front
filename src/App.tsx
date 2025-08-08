@@ -4,6 +4,7 @@ import HomePage from './pages/index'
 import Clientes from './pages/clientes'
 import Filiais from './pages/filiais'
 import Medicamentos from './pages/medicamentos'
+import Vendas from './pages/vendas'
 import { Navbar } from '@/components/layout/Navbar'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/filiais" element={<Filiais />} />
           <Route path="/medicamentos" element={<Medicamentos />} />
+          <Route path="/vendas" element={<Vendas />} />
         </Routes>
       </main>
     </BrowserRouter>
