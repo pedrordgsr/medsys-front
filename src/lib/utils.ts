@@ -5,13 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Validação de CPF (somente números, 11 dígitos, não sequencial e dígitos verificadores corretos)
 export function validarCPF(cpf: string): boolean {
   if (!cpf) return false
   const digits = cpf.replace(/\D/g, '')
   if (digits.length !== 11) return false
-  if (/^(\d)\1{10}$/.test(digits)) return false // rejeita sequências iguais
-
+  if (/^(\d)\1{10}$/.test(digits)) return false 
   const calcCheck = (base: string, factor: number) => {
     let total = 0
     for (let i = 0; i < base.length; i++) {
@@ -28,7 +26,6 @@ export function validarCPF(cpf: string): boolean {
   return true
 }
 
-// Formata CPF para ###.###.###-## sem alterar se incompleto
 export function formatarCPF(cpf: string): string {
   const digits = cpf.replace(/\D/g, '').slice(0, 11)
   if (!digits) return ''

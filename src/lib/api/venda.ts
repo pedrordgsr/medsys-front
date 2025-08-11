@@ -12,19 +12,44 @@ export interface VendaCreateDTO {
   itens: VendaItemCreateDTO[]
 }
 
-export interface VendaItemDTO extends VendaItemCreateDTO {
-  id: number
+export interface VendaItemDTO {
+  medicamentoId: number
+  medicamentoNome: string
+  valorUnitario: number
+  quantidade: number
+  subtotal: number
+  receita: boolean
 }
 
 export interface VendaDTO {
   id: number
-  cliente_id: number
-  filial_id: number
+  dataHora: string
+  total: number
+  id_cliente: number
+  id_filial: number
   itens: VendaItemDTO[]
-  createdAt?: string
 }
 
 export async function criarVenda(payload: VendaCreateDTO) {
   const { data } = await api.post<VendaDTO>('/venda', payload)
   return data
+}
+
+export async function listarVendas() {
+  const { data } = await api.get<VendaDTO[]>('/venda')
+  return data
+}
+
+export async function obterVenda(id: number) {
+  const { data } = await api.get<VendaDTO>(`/venda/${id}`)
+  return data
+}
+
+export async function atualizarVenda(id: number, payload: VendaCreateDTO) {
+  const { data } = await api.put<VendaDTO>(`/venda/${id}`, payload)
+  return data
+}
+
+export async function deletarVenda(id: number) {
+  await api.delete(`/venda/${id}`)
 }

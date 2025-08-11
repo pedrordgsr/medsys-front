@@ -8,7 +8,6 @@ export const api = axios.create({
   }
 })
 
-// Interceptor de resposta para normalizar mensagens de erro
 api.interceptors.response.use(
   (res) => res,
   (error) => {

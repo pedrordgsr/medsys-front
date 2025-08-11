@@ -69,6 +69,7 @@ export default function Vendas() {
             if (!med) return `Item ${i + 1}: medicamento inválido`
             const qtd = Number(it.quantidade)
             if (!qtd || qtd <= 0) return `Item ${i + 1}: quantidade inválida`
+            if (typeof med.estoque === 'number' && qtd > med.estoque) return `Item ${i + 1}: quantidade solicitada (${qtd}) maior que estoque disponível (${med.estoque})`
             if (med.tipo === 'CONTROLADO' && !it.receita) return `Item ${i + 1}: medicamento controlado requer receita`
         }
         return null
@@ -147,7 +148,7 @@ export default function Vendas() {
                                                     <label className="text-xs font-medium">Medicamento</label>
                                                     <select value={it.medicamentoId} onChange={e => atualizarItem(idx, { medicamentoId: e.target.value, receita: false })} className="border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-stone-400 bg-white" disabled={salvando || loading} required>
                                                         <option value="" disabled>{loading ? 'Carregando...' : 'Selecione'}</option>
-                                                        {medicamentos.map(m => <option key={m.id} value={m.id}>{m.id} - {m.nome} ({m.tipo})</option>)}
+                                                        {medicamentos.map(m => <option key={m.id} value={m.id}>{m.id} - {m.nome} ({m.tipo}) • estoque: {m.estoque ?? 0}</option>)}
                                                     </select>
                                                 </div>
                                                 <div className="flex flex-col gap-1">
@@ -162,10 +163,10 @@ export default function Vendas() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="flex justify-between items-center text-xs text-stone-600">
+                        <div className="flex justify-between items-center text-xs text-stone-600">
                                                 <div>
                                                     {med && (
-                                                        <span className="font-medium">{med.nome}</span>
+                            <span className="font-medium">{med.nome} <span className="ml-2 text-[11px] text-stone-500">(Estoque: {med.estoque ?? 0})</span></span>
                                                     )}
                                                     {controlado && <span className="ml-2 text-red-600 font-semibold">CONTROLADO</span>}
                                                 </div>

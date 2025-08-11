@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem } from '@/components/ui/navigation-menu'
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent } from '@/components/ui/navigation-menu'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -7,7 +7,6 @@ const links = [
   { to: '/clientes', label: 'Clientes' },
   { to: '/medicamentos', label: 'Medicamentos' },
   { to: '/filiais', label: 'Filiais' },
-  { to: '/vendas', label: 'Vendas' },
 ]
 
 export function Navbar() {
@@ -24,12 +23,37 @@ export function Navbar() {
                   className={({ isActive }) => cn(
                     'px-3 py-2 rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-stone-300',
                     'hover:bg-stone-100 data-[active=true]:bg-stone-200/60',
-                    isActive && 'data-[active=true]' )}
+                    isActive && 'data-[active=true]')}
                 >
                   {l.label}
                 </NavLink>
               </NavigationMenuItem>
             ))}
+
+            {/* Dropdown de Vendas */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="px-3 py-2 rounded-md text-sm font-medium">Vendas</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-56 bg-white rounded-md border shadow p-1">
+                  <NavLink
+                    to="/vendas"
+                    className={({ isActive }) => cn(
+                      'block rounded-sm px-3 py-2 text-sm hover:bg-stone-100',
+                      isActive && 'bg-stone-200/60')}
+                  >
+                    Todas as vendas
+                  </NavLink>
+                  <NavLink
+                    to="/vendas/nova"
+                    className={({ isActive }) => cn(
+                      'block rounded-sm px-3 py-2 text-sm hover:bg-stone-100',
+                      isActive && 'bg-stone-200/60')}
+                  >
+                    Nova venda
+                  </NavLink>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

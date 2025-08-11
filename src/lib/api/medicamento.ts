@@ -6,6 +6,7 @@ export interface MedicamentoDTO {
   preco: number
   tipo: string
   filialId: number
+  estoque: number
 }
 
 export interface MedicamentoCreateDTO {
@@ -32,4 +33,10 @@ export async function atualizarMedicamento(id: number, payload: MedicamentoCreat
 
 export async function deletarMedicamento(id: number) {
   await api.delete(`/medicamento/${id}`)
+}
+
+// Atualiza a quantidade em estoque via POST (envia um número inteiro bruto no body)
+export async function atualizarEstoqueMedicamento(id: number, quantidade: number) {
+  const { data } = await api.post<number>(`/medicamento/estoque/${id}`, quantidade)
+  return data
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
-import { listarMedicamentos, criarMedicamento, atualizarMedicamento, deletarMedicamento, type MedicamentoDTO } from '@/lib/api/medicamento'
+import { listarMedicamentos, criarMedicamento, atualizarMedicamento, deletarMedicamento, atualizarEstoqueMedicamento, type MedicamentoDTO } from '@/lib/api/medicamento'
 import { listarFiliais, type FilialDTO } from '@/lib/api/filial'
 
 type Medicamento = MedicamentoDTO
@@ -17,6 +17,7 @@ export default function Medicamentos() {
     const [form, setForm] = useState<NovoMedicamentoForm>({ nome: '', preco: '', tipo: 'COMUM', filialId: '' })
     const [salvando, setSalvando] = useState(false)
     const [editandoId, setEditandoId] = useState<number | null>(null)
+    const [estoquesEdicao, setEstoquesEdicao] = useState<Record<number, string>>({})
 
     async function carregarMedicamentos() {
         setLoading(true)
@@ -24,6 +25,8 @@ export default function Medicamentos() {
         try {
             const data = await listarMedicamentos()
             setMedicamentos(data)
+            // Preenche cache de edição de estoque
+            setEstoquesEdicao(Object.fromEntries(data.map(m => [m.id, String(m.estoque ?? 0)])))
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : 'Erro ao buscar medicamentos'
             setErro(msg)
@@ -110,6 +113,33 @@ export default function Medicamentos() {
         setForm({ nome: '', preco: '', tipo: 'COMUM', filialId: '' })
         setEditandoId(null)
         setErro(null)
+    }
+
+    function onChangeEstoque(id: number, valor: string) {
+        // Apenas números inteiros e vazio
+        const normalizado = valor.replace(/[^0-9]/g, '')
+        setEstoquesEdicao(prev => ({ ...prev, [id]: normalizado }))
+    }
+
+    async function salvarEstoque(id: number) {
+        if (salvando || loading) return
+        const valorStr = estoquesEdicao[id]
+        const qtd = Number(valorStr)
+        if (!Number.isInteger(qtd) || qtd < 0) {
+            setErro('Estoque inválido: use um número inteiro não negativo')
+            return
+        }
+        setSalvando(true)
+        setErro(null)
+        try {
+            await atualizarEstoqueMedicamento(id, qtd)
+            await carregarMedicamentos()
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Erro ao atualizar estoque'
+            setErro(msg)
+        } finally {
+            setSalvando(false)
+        }
     }
 
     async function deletar(id: number) {
@@ -257,6 +287,7 @@ export default function Medicamentos() {
                                         <th className="py-2 pr-4">Nome</th>
                                         <th className="py-2 pr-4">Preço</th>
                                         <th className="py-2 pr-4">Tipo</th>
+                                        <th className="py-2 pr-4">Estoque</th>
                                         <th className="py-2 pr-4">Filial</th>
                                         <th className="py-2 pr-2">Ações</th>
                                     </tr>
@@ -270,6 +301,25 @@ export default function Medicamentos() {
                                                 <td className="py-2 pr-4">{m.nome}</td>
                                                 <td className="py-2 pr-4 font-mono">{formatarPreco(m.preco)}</td>
                                                 <td className="py-2 pr-4"><span className="inline-block px-2 py-0.5 rounded bg-stone-100 text-stone-700 text-[11px] font-medium">{m.tipo}</span></td>
+                                                <td className="py-2 pr-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            pattern="[0-9]*"
+                                                            value={estoquesEdicao[m.id] ?? String(m.estoque ?? 0)}
+                                                            onChange={e => onChangeEstoque(m.id, e.target.value)}
+                                                            className="w-20 border rounded-md px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-stone-400"
+                                                            disabled={salvando}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => salvarEstoque(m.id)}
+                                                            disabled={salvando}
+                                                            className="text-xs px-2 py-1 rounded border bg-white hover:bg-stone-50 transition disabled:opacity-50"
+                                                        >Salvar</button>
+                                                    </div>
+                                                </td>
                                                 <td className="py-2 pr-4 text-xs">{filial ? `${filial.id} - ${filial.endereco}` : m.filialId}</td>
                                                 <td className="py-2 pr-2 whitespace-nowrap text-xs">
                                                     <button
@@ -291,7 +341,7 @@ export default function Medicamentos() {
                                         )
                                     })}
                                     {loading && (
-                                        <tr><td colSpan={6} className="py-4 text-center text-stone-500">Carregando...</td></tr>
+                                        <tr><td colSpan={7} className="py-4 text-center text-stone-500">Carregando...</td></tr>
                                     )}
                                 </tbody>
                             </table>
